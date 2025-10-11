@@ -47,7 +47,7 @@ for table_name, table_content in create_tables:
                 default_value = "0"
         elif is_nullable:
             default_value = "null"
-        elif re.search(r'\b(int|decimal)\b', col_type_lower):
+        elif re.search(r'\b(int|decimal|tinyint)\b', col_type_lower):
             default_value = "0"
         elif re.search(r'\b(enum)\b', col_type_lower):
             enum_values = re.findall(r"'([^']*)'", col_type)
