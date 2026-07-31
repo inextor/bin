@@ -4,6 +4,7 @@ import sys
 
 # Check for an optional table name argument
 target_table = sys.argv[1] if len(sys.argv) > 1 else None
+date_flag_present = sys.argv[2] == 'true' if len(sys.argv) > 2 else False
 
 # Read the SQL content from stdin
 content = sys.stdin.read()
@@ -33,7 +34,12 @@ for table_name, table_content in create_tables:
             ts_type = " | ".join(f"'{v}'" for v in list(dict.fromkeys(enum_values)))
         elif re.search(r'\b(varchar|text|date)\b', col_type_lower):
             ts_type = "string"
-        elif re.search(r'\b(timestamp|datetime)\b', col_type_lower):
+        elif 'timestamp' in col_type_lower:
+            if date_flag_present:
+                ts_type = "Date"
+            else:
+                ts_type = "string | Date"
+        elif 'datetime' in col_type_lower:
             ts_type = "string | Date"
 
         # If 'NOT NULL' is not present, the column is nullable.

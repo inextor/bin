@@ -16,16 +16,19 @@ else
   exit 1
 fi
 
-# --- Argument Parsing ---
 WRITE_TO_FILE=false
-while getopts "f" opt; do
+DATE_FLAG=false
+while getopts "fd" opt; do
   case ${opt} in
     f )
       WRITE_TO_FILE=true
       ;;
+    d )
+      DATE_FLAG=true
+      ;;
     \? )
       echo "Invalid option: -$OPTARG" >&2
-      echo "Usage: $0 [-f] <database_name> [table_name]" >&2
+      echo "Usage: $0 [-f] [-d] <database_name> [table_name]" >&2
       exit 1
       ;;
   esac
@@ -36,7 +39,7 @@ shift $((OPTIND -1))
 
 # The first argument is the database name (required)
 if [ -z "$1" ]; then
-  echo "Usage: $0 [-f] <database_name> [table_name]" >&2
+  echo "Usage: $0 [-f] [-d] <database_name> [table_name]" >&2
   exit 1
 fi
 
@@ -61,7 +64,7 @@ generate_interfaces() {
     sed 's/ENGINE=.*/;/' | \
     sed 's/ COLLATE.\\w\\+//' | \
     sed 's/ CHARACTER SET \\w\\+//' | \
-    "$(dirname "$0")/parse_sql.py" "$table_to_generate"
+    "$(dirname "$0")/parse_sql.py" "$table_to_generate" "$DATE_FLAG"
 }
 
 if [ "$WRITE_TO_FILE" = true ]; then
